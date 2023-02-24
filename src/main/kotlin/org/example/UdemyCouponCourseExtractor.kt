@@ -40,7 +40,6 @@ class UdemyCouponCourseExtractor(private val couponUrl: String) {
         )
         val courseDataResult =
             extractCourseDataFromOfficialAPI(RemoteJsonHelper.getJsonObjectFrom(UrlUtils.getCourseAPI(courseId)))
-//        driver.quit()
         return combineCourseAndCouponData(couponDataResult, courseDataResult)
     }
 
