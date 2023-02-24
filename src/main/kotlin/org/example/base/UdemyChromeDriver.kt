@@ -6,13 +6,7 @@ import org.openqa.selenium.By
 import org.openqa.selenium.chrome.ChromeDriver
 import org.openqa.selenium.chrome.ChromeOptions
 
-open class UdemyChromeDriver() : ChromeDriver() {
-    init {
-        val options = ChromeOptions()
-        System.getProperty("webdriver.chrome.driver", "/usr/bin/chromedriver")
-        options.setCapability("webdriver.chrome.redirect_to_login", false)
-    }
-
+open class UdemyChromeDriver(chromeOptions: ChromeOptions) : ChromeDriver(chromeOptions) {
     fun openWebPage(url: String) {
         super.get(url)
     }

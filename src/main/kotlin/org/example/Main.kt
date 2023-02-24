@@ -1,20 +1,19 @@
 package org.example
 
-import org.example.helper.RemoteJsonHelper
-import java.io.File
-
-
-fun fetchFromENext() {
-    val outputFile = File("output_json.txt")
-    val url = "https://jobs.e-next.in/public/assets/data/udemy.json"
-    val jsonArray = RemoteJsonHelper.getJsonArrayFrom(url)
-    for (jsonObject in jsonArray) {
-        println(jsonObject)
-    }
-    outputFile.writeText(jsonArray.joinToString("\n"))
-}
+import com.google.gson.GsonBuilder
+import org.example.crawler.EnextCrawler
+import org.example.helper.LocalJsonHelper
+import org.json.JSONArray
+import java.io.FileWriter
 
 fun main() {
-//    fetchFromENext()
-    println(UdemyCouponCourseExtractor("https://www.udemy.com/course/introduction-to-drinking-water-treatment/?couponCode=30EF8EDB986A1BFCFD07").getFullCouponCodeData())
+    val couponJsonArray = JSONArray()
+    for (couponUrl in EnextCrawler().getAllCouponUrl()) {
+        println(couponUrl)
+        val couponCodeData = UdemyCouponCourseExtractor(couponUrl).getFullCouponCodeData()
+        couponJsonArray.put(couponCodeData)
+    }
+    LocalJsonHelper.dumpJsonToFile(couponJsonArray)
+
+
 }

@@ -8,18 +8,27 @@ import org.example.helper.RemoteJsonHelper
 import org.example.utils.UrlUtils
 import org.json.JSONObject
 import org.openqa.selenium.By
+import org.openqa.selenium.chrome.ChromeOptions
 import org.openqa.selenium.support.ui.ExpectedConditions
 import org.openqa.selenium.support.ui.WebDriverWait
 import java.time.Duration
+import java.util.concurrent.TimeUnit
 
 class UdemyCouponCourseExtractor(private val couponUrl: String) {
     private var courseId = 0
     private var couponCode: String = ""
-    private var driver = UdemyChromeDriver()
+    private var driver = UdemyChromeDriver(getChromeOptions())
 
     init {
         courseId = extractCourseId()
         couponCode = extractCouponCode()
+        driver.manage().timeouts().pageLoadTimeout(30, TimeUnit.SECONDS)
+    }
+
+    private fun getChromeOptions(): ChromeOptions {
+        val options = ChromeOptions()
+        System.getProperty("webdriver.chrome.driver", "/usr/bin/chromedriver")
+        return options
     }
 
     private fun extractCourseId(): Int {
