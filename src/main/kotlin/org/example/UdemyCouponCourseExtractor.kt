@@ -1,44 +1,25 @@
 package org.example
 
-import org.example.base.UdemyChromeDriver
 import org.example.data.CouponCourseData
 import org.example.data.CouponJsonData
 import org.example.data.CourseJsonData
+import org.example.data.RequestHtmlHelper
 import org.example.helper.RemoteJsonHelper
 import org.example.utils.UrlUtils
 import org.json.JSONObject
-import org.openqa.selenium.By
-import org.openqa.selenium.chrome.ChromeOptions
-import org.openqa.selenium.support.ui.ExpectedConditions
-import org.openqa.selenium.support.ui.WebDriverWait
-import java.time.Duration
-import java.util.concurrent.TimeUnit
 
 class UdemyCouponCourseExtractor(private val couponUrl: String) {
     private var courseId = 0
     private var couponCode: String = ""
-    private var driver = UdemyChromeDriver(getChromeOptions())
 
     init {
         courseId = extractCourseId()
         couponCode = extractCouponCode()
-        driver.manage().timeouts().pageLoadTimeout(30, TimeUnit.SECONDS)
-    }
-
-    private fun getChromeOptions(): ChromeOptions {
-        val options = ChromeOptions()
-        System.getProperty("webdriver.chrome.driver", "/usr/bin/chromedriver")
-        return options
     }
 
     private fun extractCourseId(): Int {
-        driver.openWebPage(couponUrl)
         return try {
-            WebDriverWait(driver, Duration.ofSeconds(3)).until(
-                ExpectedConditions.presenceOfElementLocated(By.id("udemy"))
-            )
-//            driver.quit()
-            driver.findElement(By.id("udemy")).getAttribute("data-clp-course-id").toInt()
+            RequestHtmlHelper.getHtmlDocument(couponUrl).getElementById("udemy")?.attr("data-clp-course-id")!!.toInt()
         } catch (e: Exception) {
             throw java.lang.Exception("CAN NOT FIND COURSE ID")
         }
@@ -59,7 +40,7 @@ class UdemyCouponCourseExtractor(private val couponUrl: String) {
         )
         val courseDataResult =
             extractCourseDataFromOfficialAPI(RemoteJsonHelper.getJsonObjectFrom(UrlUtils.getCourseAPI(courseId)))
-        driver.quit()
+//        driver.quit()
         return combineCourseAndCouponData(couponDataResult, courseDataResult)
     }
 
@@ -155,8 +136,7 @@ class UdemyCouponCourseExtractor(private val couponUrl: String) {
             usesRemaining =
                 couponJsonObject.getJSONObject("price_text").getJSONObject("data").getJSONObject("pricing_result")
                     .getJSONObject("campaign").getInt("uses_remaining")
-        } catch (e: Exception) {
-            println("${this.javaClass.simpleName} encountered error: $e")
+        } catch (_: Exception) {
         }
 
         return CouponJsonData(price, expiredDate, previewImage, previewVideo, usesRemaining)
