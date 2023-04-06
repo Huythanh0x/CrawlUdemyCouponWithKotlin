@@ -1,10 +1,8 @@
 package org.example
 
-import com.google.gson.GsonBuilder
 import org.example.crawler.EnextCrawler
 import org.example.helper.LocalJsonHelper
 import org.json.JSONArray
-import java.io.FileWriter
 import java.util.concurrent.Executors
 import java.util.concurrent.ThreadPoolExecutor
 
