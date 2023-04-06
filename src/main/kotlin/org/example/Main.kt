@@ -1,6 +1,8 @@
 package org.example
 
+import org.example.crawler.CouponScorpionCrawler
 import org.example.crawler.EnextCrawler
+import org.example.crawler.OnlineCoursesOOOCrawler
 import org.example.crawler.RealDiscountCrawler
 import org.example.helper.LocalJsonHelper
 import org.json.JSONArray
@@ -32,6 +34,8 @@ fun main() {
     val allCouponUrls = mutableSetOf<String>()
     allCouponUrls.addAll(EnextCrawler().getAllCouponUrl())
     allCouponUrls.addAll(RealDiscountCrawler().getAllCouponUrl())
+    allCouponUrls.addAll(OnlineCoursesOOOCrawler().getAllCouponUrl())
+    allCouponUrls.addAll(CouponScorpionCrawler().getAllCouponUrl())
     saveAllCouponData(allCouponUrls)
     val end = System.currentTimeMillis()
     println("Total time taken: ${end - start} ms")
