@@ -1,12 +1,13 @@
 package org.example
 
 import org.example.crawler.EnextCrawler
+import org.example.crawler.RealDiscountCrawler
 import org.example.helper.LocalJsonHelper
 import org.json.JSONArray
 import java.util.concurrent.Executors
 import java.util.concurrent.ThreadPoolExecutor
 
-fun saveAllCouponData(allCouponUrls: List<String>, numberOfThread: Int = 40) {
+fun saveAllCouponData(allCouponUrls: Set<String>, numberOfThread: Int = 40) {
     val couponJsonArray = JSONArray()
     val executor: ThreadPoolExecutor = Executors.newFixedThreadPool(numberOfThread) as ThreadPoolExecutor
 
@@ -28,7 +29,9 @@ fun saveAllCouponData(allCouponUrls: List<String>, numberOfThread: Int = 40) {
 
 fun main() {
     val start = System.currentTimeMillis()
-    val allCouponUrls = EnextCrawler().getAllCouponUrl()
+    val allCouponUrls = mutableSetOf<String>()
+    allCouponUrls.addAll(EnextCrawler().getAllCouponUrl())
+    allCouponUrls.addAll(RealDiscountCrawler().getAllCouponUrl())
     saveAllCouponData(allCouponUrls)
     val end = System.currentTimeMillis()
     println("Total time taken: ${end - start} ms")

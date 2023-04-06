@@ -3,7 +3,7 @@ package org.example
 import org.example.data.CouponCourseData
 import org.example.data.CouponJsonData
 import org.example.data.CourseJsonData
-import org.example.data.RequestHtmlHelper
+import org.example.helper.RequestHtmlHelper
 import org.example.helper.RemoteJsonHelper
 import org.example.utils.UrlUtils
 import org.json.JSONObject

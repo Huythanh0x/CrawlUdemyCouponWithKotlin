@@ -1,4 +1,4 @@
-package org.example.data
+package org.example.helper
 
 import org.jsoup.Jsoup
 import org.jsoup.nodes.Document
