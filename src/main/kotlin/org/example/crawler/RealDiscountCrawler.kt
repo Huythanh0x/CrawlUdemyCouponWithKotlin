@@ -5,9 +5,9 @@ import org.example.helper.RemoteJsonHelper
 import org.json.JSONArray
 import org.json.JSONObject
 
-class RealDiscountCrawler() : CouponUrlCrawlerBase() {
+class RealDiscountCrawler(private val maxCouponRequest:Int=600) : CouponUrlCrawlerBase() {
     override val baseAPIUrl: String
-        get() = "https://www.real.discount/api-web/all-courses/?store=Udemy&page=1&per_page=300&orderby=undefined&free=0&search=&language=&cat="
+        get() = "https://www.real.discount/api-web/all-courses/?store=Udemy&page=1&per_page=${maxCouponRequest}&orderby=undefined&free=0&search=&language=&cat="
 
     override fun getAllCouponUrl(): List<String> {
         return fetchListJsonObjectFromAPI().mapNotNull { it as JSONObject }

@@ -29,7 +29,7 @@ class UdemyCouponCourseExtractor(private val couponUrl: String) {
         return couponUrl.split("/?couponCode=")[1]
     }
 
-    fun getFullCouponCodeData(): CouponCourseData {
+    fun getFullCouponCodeData(): CouponCourseData? {
 
         val couponDataResult = extractDataCouponFromOfficialAPI(
             RemoteJsonHelper.getJsonObjectFrom(
@@ -43,7 +43,8 @@ class UdemyCouponCourseExtractor(private val couponUrl: String) {
         return combineCourseAndCouponData(couponDataResult, courseDataResult)
     }
 
-    private fun combineCourseAndCouponData(couponData: CouponJsonData, courseData: CourseJsonData): CouponCourseData {
+    private fun combineCourseAndCouponData(couponData: CouponJsonData, courseData: CourseJsonData): CouponCourseData? {
+        if (couponData.price != 0f) return null
         return CouponCourseData(
             courseId,
             courseData.category,
@@ -74,7 +75,7 @@ class UdemyCouponCourseExtractor(private val couponUrl: String) {
 
         val title: String = courseObjectJson.getString("title")
         val headline: String = courseObjectJson.getString("headline")
-        val description: String = courseObjectJson.getString("description")
+        val description: String = courseObjectJson.getString("description").trim()
         try {
             author = courseObjectJson.getJSONArray("visible_instructors").getJSONObject(0).getString("title")
         } catch (_: Exception) {

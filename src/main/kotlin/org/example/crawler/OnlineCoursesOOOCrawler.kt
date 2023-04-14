@@ -1,19 +1,27 @@
 package org.example.crawler
 
+import kotlinx.coroutines.*
+import kotlinx.coroutines.sync.Semaphore
 import org.example.base.CouponUrlCrawlerBase
 import org.example.helper.RequestHtmlHelper
 
-class OnlineCoursesOOOCrawler : CouponUrlCrawlerBase() {
+class OnlineCoursesOOOCrawler(private val numberOfPage: Int = 30) : CouponUrlCrawlerBase() {
     override val baseAPIUrl: String
         get() = "https://www.onlinecourses.ooo"
 
-    private val numberOfPage = 30
-    override fun getAllCouponUrl(): List<String> {
+    override fun getAllCouponUrl(): List<String> = runBlocking {
         val allCouponUrls = mutableListOf<String>()
+        val jobs = mutableListOf<Job>()
+        val semaphore = Semaphore(5)
         for (pageIndex in 1..numberOfPage) {
-            allCouponUrls.addAll(extractUrlFromHTMLPage(pageIndex))
+            semaphore.acquire()
+            jobs += launch(Dispatchers.IO) {
+                allCouponUrls.addAll(extractUrlFromHTMLPage(pageIndex))
+                semaphore.release()
+            }
         }
-        return allCouponUrls
+        jobs.joinAll()
+        return@runBlocking allCouponUrls
     }
 
     private fun extractUrlFromHTMLPage(pageIndex: Int): MutableList<String> {
@@ -29,6 +37,7 @@ class OnlineCoursesOOOCrawler : CouponUrlCrawlerBase() {
     }
 
     private fun extractCouponUrl(urlToDetailPage: String): String? {
-        return RequestHtmlHelper.getHtmlDocument(urlToDetailPage).select(".link-holder").first()?.select("a")?.first()?.attr("href")
+        return RequestHtmlHelper.getHtmlDocument(urlToDetailPage).select(".link-holder").first()?.select("a")?.first()
+            ?.attr("href")
     }
 }
